@@ -43,10 +43,23 @@ async def crime_record_details(record_id: str):
     return record_details.to_dict(orient='records')
 
 @app.get("/crime_statistics/")
-async def crime_statistics(location: str = None, start_date: str = None, end_date: str = None):
+async def crime_statistics():
     # Implement logic to calculate statistics based on provided parameters
     # This is just a placeholder
-    return {"message": "Crime statistics endpoint is under construction"}
+    newest = crime_records_df['DateTime'].max().strftime('%Y-%m-%d')
+    oldest = crime_records_df['DateTime'].min().strftime('%Y-%m-%d')
+    value_counts_of_crime_type = crime_records_df['Type of Crime'].value_counts().to_dict()
+    unique_victims = crime_records_df['Victims'].unique().__len__()
+    unique_suspects = crime_records_df['Suspects'].unique().__len__()
+    unique_witnesses = crime_records_df['Witnesses'].unique().__len__()
+    return {
+        "oldest_record_date": oldest,
+        "newest_record_date": newest,
+        "value_counts_of_crime_type": value_counts_of_crime_type,
+        "unique_victims": unique_victims,
+        "unique_suspects": unique_suspects,
+        "unique_witnesses": unique_witnesses
+    }
 
 @app.get("/suspects/{record_id}")
 async def suspects(record_id: str):
